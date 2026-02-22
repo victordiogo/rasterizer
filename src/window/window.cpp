@@ -9,6 +9,7 @@ Window::Window(int width, int height, const char* title) {
 
   glfwMakeContextCurrent(m_handle);
   glfwSetWindowUserPointer(m_handle, this);
+  // callbacks
   glfwSetFramebufferSizeCallback(m_handle, framebuffer_size_callback);
   glfwSetCursorPosCallback(m_handle, cursor_pos_callback);
   glfwSetMouseButtonCallback(m_handle, mouse_button_callback);

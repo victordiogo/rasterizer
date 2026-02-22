@@ -18,7 +18,7 @@ public:
       m_last_update{0.0}
   {
     if (fps_update_interval <= 0.0)
-      throw std::invalid_argument("update_interval must be positive");
+      throw std::invalid_argument("fps_update_interval must be positive");
   }
 
   // should be called on start of each frame
