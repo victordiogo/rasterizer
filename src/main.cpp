@@ -8,6 +8,7 @@
 #include <array>
 
 #include "math/vector.hpp"
+#include "math/matrix.hpp"
 #include "timer.hpp"
 #include "frame-presenter.hpp"
 

@@ -5,7 +5,7 @@
 #include <functional>
 
 // Wrapper for GLFWwindow with RAII semantics and callback management
-// Glfw must be initialized on creation
+// Glfw must be initialized before creating a Window object
 class Window {
 public:
   Window(int width, int height, const char* title);
