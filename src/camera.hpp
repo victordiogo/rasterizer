@@ -19,20 +19,17 @@ class Camera {
 public:
   Vec3f position;
 
-  Camera(const Vec3f& position, float sensitivity, float fovy, float aspect, float near = 0.1f)
+  Camera(const Vec3f& position, float fovy, float aspect, float near = 0.1f, float far = 100.0f)
     : position{position},
       m_pitch{0.0f},
       m_yaw{0.0f},
-      m_sensitivity{sensitivity},
       m_fovy{fovy},
       m_aspect{aspect},
-      m_near{near}
+      m_near{near},
+      m_far{far}
   {
     if (m_pitch > 89.9f || m_pitch < -89.9f)
       throw std::out_of_range{"Camera pitch must be between -89.9 and 89.9 degrees"};
-    
-    if (m_sensitivity <= 0.0f)
-      throw std::out_of_range{"Camera sensitivity must be greater than 0"};
 
     if (m_fovy <= 0.0f || m_fovy >= 180.0f)
       throw std::out_of_range{"Camera vertical FOV must be between 0 and 180 degrees"};
@@ -43,21 +40,38 @@ public:
     if (m_near <= 0.0f)
       throw std::out_of_range{"Camera near plane must be greater than 0"};
 
+    if (m_far <= m_near)
+      throw std::out_of_range{"Camera far plane must be greater than near plane"};
+
     update_vectors(); // Initialize front, right, and up vectors
   }
 
   auto view_matrix() const -> Mat4f {
-    //return glm::lookAt(position, position + m_front, m_up);
+    Mat4f mat;
+    mat[0][0] = m_right.x;
+    mat[0][1] = m_up.x;
+    mat[0][2] = m_front.x;
+    mat[1][0] = m_right.y;
+    mat[1][1] = m_up.y;
+    mat[1][2] = m_front.y;
+    mat[2][0] = m_right.z;
+    mat[2][1] = m_up.z;
+    mat[2][2] = m_front.z;
+    mat[3][0] = -dot(m_right, position);
+    mat[3][1] = -dot(m_up, position);
+    mat[3][2] = -dot(m_front, position);
+    mat[3][3] = 1.0f;
+    return mat;
   }
 
-  // infinite reversed-z projection matrix
   auto projection_matrix() const -> Mat4f {
     auto f = 1.0f / std::tan(radians(m_fovy) / 2.0f);
     auto mat = Mat4f{};
     mat[0][0] = f / m_aspect;
     mat[1][1] = f;
-    mat[3][2] = m_near;
+    mat[2][2] = (-m_far - m_near) / (m_far - m_near);
     mat[2][3] = -1.0f;
+    mat[3][2] = (2.0f * m_far * m_near) / (m_far - m_near);
     return mat;
   }
 
@@ -108,8 +122,8 @@ public:
   }
   
   auto rotate(const Vec2f& offset) -> void {
-    m_yaw += offset.x * m_sensitivity;
-    m_pitch += offset.y * m_sensitivity;
+    m_yaw += offset.x;
+    m_pitch += offset.y;
     
     if (m_pitch > 89.9f) m_pitch = 89.9f;
     if (m_pitch < -89.9f) m_pitch = -89.9f;
@@ -123,10 +137,10 @@ private:
   Vec3f m_right;
   float m_pitch; // angle in degrees around the Right axis (0 means looking at the horizon, positive means looking up)
   float m_yaw; // angle in degrees around the Y axis (0 means looking -Z, positive means looking to the right)
-  float m_sensitivity;
   float m_fovy; // in degrees
   float m_aspect;
   float m_near;
+  float m_far;
 
   auto update_vectors() -> void {
     m_front.x = std::sin(radians(m_yaw)) * std::cos(radians(m_pitch));

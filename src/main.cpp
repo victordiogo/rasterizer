@@ -12,6 +12,8 @@
 #include "timer.hpp"
 #include "frame-presenter.hpp"
 
+#include <iostream>
+
 auto create_window(int width, int height) -> Window {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
@@ -56,6 +58,7 @@ auto main() -> int {
   glViewport(0, 0, width, height);
 
   auto frame_presenter = FramePresenter{width, height};
+
   window.set_framebuffer_size_callback([&](GLFWwindow*, int width, int height) {
     on_framebuffer_size(width, height, frame_presenter);
   });
