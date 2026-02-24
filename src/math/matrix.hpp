@@ -1,12 +1,33 @@
-#ifndef MATRIX_HPP
-#define MATRIX_HPP
+#ifndef MATH_MATRIX_HPP
+#define MATH_MATRIX_HPP
 
 #include <array>
 #include "math/vector.hpp"
 
 // row-major order
 template<typename T, int dim>
-using Mat = std::array<std::array<T, dim>, dim>;
+class Mat {
+public:
+  explicit Mat(T value = T{}) {
+    for (auto i = 0u; i < dim; ++i) {
+      m_data[i][i] = value;
+    }
+  }
+
+  auto operator[](unsigned i) -> std::array<T, dim>& {
+    assert(i < dim);
+    return m_data[i];
+  }
+
+  auto operator[](unsigned i) const -> const std::array<T, dim>& {
+    assert(i < dim);
+    return m_data[i];
+  }
+
+private:
+  using Data = std::array<std::array<T, dim>, dim>;
+  Data m_data{};
+};
 
 using Mat3f = Mat<float, 3>;
 using Mat4f = Mat<float, 4>;
@@ -51,4 +72,4 @@ inline auto operator*(const Vec<T, dim>& v, const Mat<T, dim>& m) -> Vec<T, dim>
 }
 
 
-#endif // MATRIX_HPP
+#endif // MATH_MATRIX_HPP

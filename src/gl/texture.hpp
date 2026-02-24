@@ -1,8 +1,10 @@
-#ifndef TEXTURE_HPP
-#define TEXTURE_HPP
+#ifndef GL_TEXTURE_HPP
+#define GL_TEXTURE_HPP
 
 #include <glad/gl.h>
 #include <utility>
+
+namespace gl {
 
 class Texture {
 public:
@@ -35,4 +37,6 @@ private:
   unsigned m_id;
 };
 
-#endif // TEXTURE_HPP
+} // namespace gl
+
+#endif // GL_TEXTURE_HPP

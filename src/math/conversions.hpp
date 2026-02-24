@@ -1,5 +1,5 @@
-#ifndef CONVERSIONS_HPP
-#define CONVERSIONS_HPP
+#ifndef MATH_CONVERSIONS_HPP
+#define MATH_CONVERSIONS_HPP
 
 template<typename T>
 inline auto radians(T degrees) -> T {
@@ -11,4 +11,4 @@ inline auto degrees(T radians) -> T {
   return radians * (T)(180.0 / 3.14159265358979323846);
 }
 
-#endif // CONVERSIONS_HPP
+#endif // MATH_CONVERSIONS_HPP

@@ -50,16 +50,16 @@ public:
     Mat4f mat;
     mat[0][0] = m_right.x;
     mat[0][1] = m_up.x;
-    mat[0][2] = m_front.x;
+    mat[0][2] = -m_front.x;
     mat[1][0] = m_right.y;
     mat[1][1] = m_up.y;
-    mat[1][2] = m_front.y;
+    mat[1][2] = -m_front.y;
     mat[2][0] = m_right.z;
     mat[2][1] = m_up.z;
-    mat[2][2] = m_front.z;
+    mat[2][2] = -m_front.z;
     mat[3][0] = -dot(m_right, position);
     mat[3][1] = -dot(m_up, position);
-    mat[3][2] = -dot(m_front, position);
+    mat[3][2] = dot(m_front, position);
     mat[3][3] = 1.0f;
     return mat;
   }
@@ -106,24 +106,24 @@ public:
     m_aspect = aspect;
   }
   
-  auto move(Movement direction, float velocity) -> void {
+  auto move(Movement direction, float distance) -> void {
     if (direction == Movement::forward)
-      position += normalize(Vec3f{m_front.x, 0.0f, m_front.z}) * velocity;
+      position += normalize(Vec3f{m_front.x, 0.0f, m_front.z}) * distance;
     if (direction == Movement::backward)
-      position -= normalize(Vec3f{m_front.x, 0.0f, m_front.z}) * velocity;
+      position -= normalize(Vec3f{m_front.x, 0.0f, m_front.z}) * distance;
     if (direction == Movement::left)
-      position -= m_right * velocity;
+      position -= m_right * distance;
     if (direction == Movement::right)
-      position += m_right * velocity;
+      position += m_right * distance;
     if (direction == Movement::up)
-      position += Vec3f{0.0f, 1.0f, 0.0f} * velocity;
+      position += m_up * distance;
     if (direction == Movement::down)
-      position -= Vec3f{0.0f, 1.0f, 0.0f} * velocity;
+      position -= m_up * distance;
   }
   
-  auto rotate(const Vec2f& offset) -> void {
-    m_yaw += offset.x;
-    m_pitch += offset.y;
+  auto rotate(float yaw, float pitch) -> void {
+    m_yaw += yaw;
+    m_pitch += pitch;
     
     if (m_pitch > 89.9f) m_pitch = 89.9f;
     if (m_pitch < -89.9f) m_pitch = -89.9f;

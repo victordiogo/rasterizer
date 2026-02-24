@@ -5,7 +5,7 @@
 Window::Window(int width, int height, const char* title) {
   m_handle = glfwCreateWindow(width, height, title, nullptr, nullptr);
   if (!m_handle)
-    throw std::runtime_error{"Failed to create GLFW window"};
+    throw std::runtime_error{"Failed to create GLFW Window"};
 
   glfwMakeContextCurrent(m_handle);
   glfwSetWindowUserPointer(m_handle, this);

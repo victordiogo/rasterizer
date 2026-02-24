@@ -23,22 +23,22 @@ public:
     return m_handle; 
   }
 
-  // Parameters: window, width, height
+  // Parameters: Window, width, height
   auto set_framebuffer_size_callback(std::function<void(GLFWwindow*, int, int)> callback) -> void {
     m_framebuffer_size_callback = std::move(callback);
   }
 
-  // Parameters: window, current cursor pos
+  // Parameters: Window, current cursor pos
   auto set_cursor_pos_callback(std::function<void(GLFWwindow*, double, double)> callback) -> void {
     m_cursor_pos_callback = std::move(callback);
   }
 
-  // Parameters: window, button, action, mods
+  // Parameters: Window, button, action, mods
   auto set_mouse_button_callback(std::function<void(GLFWwindow*, int, int, int)> callback) -> void {
     m_mouse_button_callback = std::move(callback);
   }
 
-  // Parameters: window, key, scancode, action, mods
+  // Parameters: Window, key, scancode, action, mods
   auto set_key_callback(std::function<void(GLFWwindow*, int, int, int, int)> callback) -> void {
     m_key_callback = std::move(callback);
   }

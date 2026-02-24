@@ -1,5 +1,5 @@
-#ifndef VECTOR_HPP
-#define VECTOR_HPP
+#ifndef MATH_VECTOR_HPP
+#define MATH_VECTOR_HPP
 
 #include <cmath>
 #include <array>
@@ -87,7 +87,13 @@ public:
 
   explicit Vec(T value = T{}) : x{value}, y{value}, z{value}, w{value} {}
 
+  Vec(const Vec<T, 3>& v, T w) : x{v.x}, y{v.y}, z{v.z}, w{w} {}
+
   Vec(T x, T y, T z, T w) : x{x}, y{y}, z{z}, w{w} {}
+
+  auto xyz() const -> Vec<T, 3> {
+    return Vec<T, 3>{x, y, z};
+  }
 
   auto operator[](unsigned index) -> T& {
     assert(index < 4);
@@ -212,7 +218,7 @@ inline auto operator/=(Vec<T, dim>& a, T b) -> Vec<T, dim>& {
 
 template<typename T, int dim>
 inline auto length(const Vec<T, dim>& v) -> T {
-  auto sum = 0;
+  auto sum = (T)0;
   for (auto i = 0u; i < dim; ++i) {
     sum += v[i] * v[i];
   }
@@ -244,7 +250,7 @@ inline auto cross(const Vec<T, 3>& a, const Vec<T, 3>& b) -> Vec<T, 3> {
 
 template<typename T, int dim>
 inline auto dot(const Vec<T, dim>& a, const Vec<T, dim>& b) -> T {
-  auto sum = 0;
+  auto sum = (T)0;
   for (auto i = 0u; i < dim; ++i) {
     sum += a[i] * b[i];
   }
@@ -252,4 +258,4 @@ inline auto dot(const Vec<T, dim>& a, const Vec<T, dim>& b) -> T {
 }
 
 
-#endif // VECTOR_HPP
+#endif // MATH_VECTOR_HPP

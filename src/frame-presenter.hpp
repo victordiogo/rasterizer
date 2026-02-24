@@ -1,9 +1,9 @@
 #ifndef FRAME_PRESENTER_HPP
 #define FRAME_PRESENTER_HPP
 
-#include "gl/buffer-object.hpp"
+#include "gl/buffer.hpp"
 #include "gl/texture.hpp"
-#include "gl/vertex-array-object.hpp"
+#include "gl/vertex-array.hpp"
 #include "gl/shader.hpp"
 #include <vector>
 #include <cstdint>
@@ -18,14 +18,14 @@ public:
     m_shader{"../resources/shaders/screen-quad.vert", "../resources/shaders/screen-quad.frag"} 
   {
     if (width <= 0 || height <= 0)
-      throw std::out_of_range{"FramePresenter width and height must be greater than 0"};
-
+      throw std::runtime_error{"Width and height must be positive and non-zero"};
+     
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pbo.id());
-    glBufferData(GL_PIXEL_UNPACK_BUFFER, (GLsizeiptr)(width * height * 4), nullptr, GL_STREAM_DRAW);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, (unsigned)(width * height) * sizeof(std::uint32_t), nullptr, GL_STREAM_DRAW);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     glBindTexture(GL_TEXTURE_2D, m_texture.id());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -49,12 +49,12 @@ public:
   }
 
   // frame size must match this presenter's size
-  auto present(const std::vector<std::uint8_t>& frame) -> void {
-    assert(frame.size() == (unsigned)(m_width * m_height * 4));
+  auto present(const std::vector<std::uint32_t>& frame) -> void {
+    assert(frame.size() == (unsigned)(m_width * m_height));
 
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pbo.id());
 
-    auto* ptr = (std::uint8_t*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
+    auto* ptr = (std::uint32_t*)glMapBuffer(GL_PIXEL_UNPACK_BUFFER, GL_WRITE_ONLY);
     std::copy(frame.data(), frame.data() + frame.size(), ptr);
     glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
 
@@ -72,27 +72,27 @@ public:
 
   auto resize(int width, int height) -> void {
     if (width <= 0 || height <= 0)
-      throw std::out_of_range{"FramePresenter width and height must be greater than 0"};
+      throw std::runtime_error{"Width and height must be positive and non-zero"};
 
     m_width = width;
     m_height = height;
 
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pbo.id());
-    glBufferData(GL_PIXEL_UNPACK_BUFFER, (GLsizeiptr)(width * height * 4), nullptr, GL_STREAM_DRAW);
+    glBufferData(GL_PIXEL_UNPACK_BUFFER, (unsigned)(width * height) * sizeof(std::uint32_t), nullptr, GL_STREAM_DRAW);
     glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
     glBindTexture(GL_TEXTURE_2D, m_texture.id());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
   }
 
 private:
   int m_width;
   int m_height;
-  BufferObject m_pbo;
-  Texture m_texture;
-  Vao m_vao;
-  BufferObject m_vbo;
-  Shader m_shader;
+  gl::Buffer m_pbo;
+  gl::Texture m_texture;
+  gl::VertexArray m_vao;
+  gl::Buffer m_vbo;
+  gl::Shader m_shader;
 };
 
 #endif // FRAME_PRESENTER_HPP
